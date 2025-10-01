@@ -1,0 +1,36 @@
+<!-- Report page -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Daily Sales Report</h2>
+    <canvas id="salesChart" width="600" height="400"></canvas>
+
+    <script>
+    async function loadSales() {
+        const res = await fetch('http://localhost:3000/get-sales');
+        const data = await res.json();
+        const labels = data.map(d => d.date);
+        const totals = data.map(d => d.total);
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Sales',
+                    data: totals,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            }
+        });
+    }
+
+    loadSales();
+    </script>
+</body>
+</html>

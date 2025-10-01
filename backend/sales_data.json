@@ -1,0 +1,62 @@
+[
+  {
+    "item_name": "Notebook",
+    "quantity": 5,
+    "price": 50
+  },
+  {
+    "item_name": "Pen",
+    "quantity": 10,
+    "price": 5
+  },
+  {
+    "item_name": "Pencil",
+    "quantity": 15,
+    "price": 2.5
+  },
+  {
+    "item_name": "Eraser",
+    "quantity": 7,
+    "price": 3
+  },
+  {
+    "item_name": "Marker",
+    "quantity": 3,
+    "price": 25
+  },
+  {
+    "item_name": "Notebook",
+    "quantity": 2,
+    "price": 50
+  },
+  {
+    "item_name": "Pen",
+    "quantity": 5,
+    "price": 5
+  },
+  {
+    "item_name": "Pencil",
+    "quantity": 10,
+    "price": 2.5
+  },
+  {
+    "item_name": "Eraser",
+    "quantity": 4,
+    "price": 3
+  },
+  {
+    "item_name": "Marker",
+    "quantity": 6,
+    "price": 25
+  },
+  {
+    "item_name": "Masala",
+    "quantity": "5",
+    "price": "50"
+  },
+  {
+    "item_name": "coconut",
+    "quantity": "5",
+    "price": "60"
+  }
+]

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Sales Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 20px 0;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #ff9800;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+      margin: 5px;
+    }
+
+    button:hover {
+      background: #e68900;
+      transform: scale(1.05);
+    }
+
+    #chartContainer {
+      margin: 30px auto;
+      width: 95%;
+      max-width: 700px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    #salesChart {
+      width: 100% !important;
+      height: 400px !important;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Daily Sales Report</h1>
+
+  <div class="container">
+    <h2>Add New Sale</h2>
+    <form id="saleForm">
+      <label for="item_name">Item Name</label>
+      <input type="text" id="item_name" required>
+
+      <label for="quantity">Quantity</label>
+      <input type="number" id="quantity" required>
+
+      <label for="price">Price</label>
+      <input type="number" id="price" step="0.01" required>
+
+      <button type="submit">➕ Add Sale</button>
+    </form>
+  </div>
+
+  <div class="container">
+    <button onclick="loadSales()">📈 Load Daily Sales Chart</button>
+  </div>
+
+  <div id="chartContainer">
+    <canvas id="salesChart"></canvas>
+  </div>
+
+  <script>
+    document.getElementById('saleForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const item_name = document.getElementById('item_name').value;
+      const quantity = document.getElementById('quantity').value;
+      const price = document.getElementById('price').value;
+
+      const response = await fetch('http://localhost:3000/add-sale', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item_name, quantity, price })
+      });
+
+      const result = await response.text();
+      alert(result);
+      document.getElementById('saleForm').reset();
+    });
+
+    async function loadSales() {
+      const response = await fetch('http://localhost:3000/get-sales');
+      const data = await response.json();
+
+      const labels = data.map(sale => sale.date);
+      const totals = data.map(sale => sale.total);
+
+      const ctx = document.getElementById('salesChart').getContext('2d');
+
+      if (window.salesChartInstance) {
+        window.salesChartInstance.destroy();
+      }
+
+      window.salesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Sales (₹)',
+            data: totals,
+            backgroundColor: [
+              '#ff6384', '#36a2eb', '#ffcd56', '#4caf50', '#ab47bc'
+            ],
+            borderRadius: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#333', font: { size: 14, weight: 'bold' } } },
+            title: {
+              display: true,
+              text: 'Daily Sales Overview',
+              color: '#333',
+              font: { size: 20, weight: 'bold' }
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#333' } },
+            y: { ticks: { color: '#333' } }
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
