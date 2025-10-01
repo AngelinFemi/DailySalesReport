@@ -14,13 +14,18 @@
       padding: 0;
       text-align: center;
     }
-
-    h1 {
-      margin: 20px 0;
-      font-size: 2.5rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    nav {
+      background: #2575fc;
+      padding: 10px;
+      text-align: center;
     }
-
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    h1 { margin: 20px 0; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
     .container {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(6px);
@@ -31,40 +36,13 @@
       max-width: 600px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     }
-
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: bold;
-    }
-
-    input {
-      width: 90%;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      font-size: 1rem;
-    }
-
+    label { display: block; margin: 10px 0 5px; font-weight: bold; }
+    input { width: 90%; padding: 10px; border: none; border-radius: 8px; margin-bottom: 15px; font-size: 1rem; }
     button {
-      background: #ff9800;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 25px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.3s;
-      margin: 5px;
+      background: #ff9800; border: none; padding: 10px 20px; border-radius: 25px;
+      font-size: 1rem; font-weight: bold; color: #fff; cursor: pointer; transition: 0.3s; margin: 5px;
     }
-
-    button:hover {
-      background: #e68900;
-      transform: scale(1.05);
-    }
-
+    button:hover { background: #e68900; transform: scale(1.05); }
     #chartContainer {
       margin: 30px auto;
       width: 95%;
@@ -74,18 +52,21 @@
       border-radius: 15px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
-
-    #salesChart {
-      width: 100% !important;
-      height: 400px !important;
-    }
+    #salesChart { width: 100% !important; height: 400px !important; }
   </style>
 </head>
 <body>
 
+  <!-- Navigation -->
+  <nav>
+    <a href="#addSale">Add Sale</a>
+    <a href="#chartContainer">View Chart</a>
+  </nav>
+
   <h1>📊 Daily Sales Report</h1>
 
-  <div class="container">
+  <!-- Add Sale Form -->
+  <div class="container" id="addSale">
     <h2>Add New Sale</h2>
     <form id="saleForm">
       <label for="item_name">Item Name</label>
@@ -101,55 +82,53 @@
     </form>
   </div>
 
-  <div class="container">
-    <button onclick="loadSales()">📈 Load Daily Sales Chart</button>
-  </div>
-
-  <div id="chartContainer">
+  <!-- Chart Container -->
+  <div id="chartContainer" class="container">
     <canvas id="salesChart"></canvas>
   </div>
 
   <script>
-    document.getElementById('saleForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const item_name = document.getElementById('item_name').value;
-      const quantity = document.getElementById('quantity').value;
-      const price = document.getElementById('price').value;
+    // Dummy sales data for testing
+    let dummySales = [
+      { date: "2025-09-25", total: 120 },
+      { date: "2025-09-26", total: 150 },
+      { date: "2025-09-27", total: 90 },
+      { date: "2025-09-28", total: 200 },
+      { date: "2025-09-29", total: 170 }
+    ];
 
-      const response = await fetch('http://localhost:3000/add-sale', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ item_name, quantity, price })
+    // Function to group sales by date
+    function groupSalesByDate(sales) {
+      const grouped = {};
+      sales.forEach(sale => {
+        if(grouped[sale.date]) {
+          grouped[sale.date] += sale.total;
+        } else {
+          grouped[sale.date] = sale.total;
+        }
       });
+      return grouped;
+    }
 
-      const result = await response.text();
-      alert(result);
-      document.getElementById('saleForm').reset();
-    });
+    // Initialize Chart
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let salesChartInstance;
 
-    async function loadSales() {
-      const response = await fetch('http://localhost:3000/get-sales');
-      const data = await response.json();
+    function updateChart() {
+      const grouped = groupSalesByDate(dummySales);
+      const labels = Object.keys(grouped);
+      const totals = Object.values(grouped);
 
-      const labels = data.map(sale => sale.date);
-      const totals = data.map(sale => sale.total);
+      if (salesChartInstance) salesChartInstance.destroy();
 
-      const ctx = document.getElementById('salesChart').getContext('2d');
-
-      if (window.salesChartInstance) {
-        window.salesChartInstance.destroy();
-      }
-
-      window.salesChartInstance = new Chart(ctx, {
+      salesChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: labels,
           datasets: [{
             label: 'Total Sales (₹)',
             data: totals,
-            backgroundColor: [
-              '#ff6384', '#36a2eb', '#ffcd56', '#4caf50', '#ab47bc'
-            ],
+            backgroundColor: labels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16)),
             borderRadius: 10
           }]
         },
@@ -157,20 +136,32 @@
           responsive: true,
           plugins: {
             legend: { labels: { color: '#333', font: { size: 14, weight: 'bold' } } },
-            title: {
-              display: true,
-              text: 'Daily Sales Overview',
-              color: '#333',
-              font: { size: 20, weight: 'bold' }
-            }
+            title: { display: true, text: 'Daily Sales Overview', color: '#333', font: { size: 20, weight: 'bold' } }
           },
-          scales: {
-            x: { ticks: { color: '#333' } },
-            y: { ticks: { color: '#333' } }
-          }
+          scales: { x: { ticks: { color: '#333' } }, y: { ticks: { color: '#333' } } }
         }
       });
     }
+
+    // Initial chart render
+    updateChart();
+
+    // Handle Add Sale form
+    document.getElementById('saleForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const item_name = document.getElementById('item_name').value;
+      const quantity = Number(document.getElementById('quantity').value);
+      const price = Number(document.getElementById('price').value);
+      const total = quantity * price;
+
+      const today = new Date().toISOString().slice(0,10);
+      dummySales.push({ date: today, total });
+
+      updateChart(); // Update chart automatically
+
+      alert(`Sale added: ${item_name} - ₹${total}`);
+      document.getElementById('saleForm').reset();
+    });
   </script>
 
 </body>

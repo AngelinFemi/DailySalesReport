@@ -58,5 +58,40 @@
     "item_name": "coconut",
     "quantity": "5",
     "price": "60"
+  },
+  {
+    "item_name": "Masala",
+    "quantity": "5",
+    "price": "250"
+  },
+  {
+    "item_name": "coconut",
+    "quantity": "8",
+    "price": "150"
+  },
+  {
+    "item_name": "Masala",
+    "quantity": "54",
+    "price": "180"
+  },
+  {
+    "item_name": "Masala",
+    "quantity": "5",
+    "price": "290"
+  },
+  {
+    "item_name": "cummin seeds",
+    "quantity": "8",
+    "price": "760"
+  },
+  {
+    "item_name": "coconut",
+    "quantity": "60",
+    "price": "874"
+  },
+  {
+    "item_name": "seeds",
+    "quantity": "874",
+    "price": "7896"
   }
 ]

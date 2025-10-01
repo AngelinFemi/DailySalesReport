@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Sales Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Daily Sales Report</h2>
+    <canvas id="salesChart" width="600" height="400"></canvas>
+
+    <script>
+        // Sample sales data
+        const salesData = [
+            { date: "2025-09-25", sales: 120 },
+            { date: "2025-09-26", sales: 150 },
+            { date: "2025-09-27", sales: 90 },
+            { date: "2025-09-28", sales: 200 }
+        ];
+
+        // Extract labels (dates) and data (sales)
+        const labels = salesData.map(item => item.date);
+        const data = salesData.map(item => item.sales);
+
+        // Chart.js configuration
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'bar', // You can use 'line' or 'pie'
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sales ($)',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
